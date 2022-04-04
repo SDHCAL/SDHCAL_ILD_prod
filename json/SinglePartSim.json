@@ -1,0 +1,24 @@
+{
+    "Particle": {
+	"ParticleName": "kaon0L",
+	"ParticleEnergyInGeV": 30,
+	"ParticleDistribution": "uniform"
+    },
+    "Detector":{
+	"DetectorName": "ILD_l2_v02",
+	"physicsList":  "QGSP_BERT"
+    },
+    "SoftwareVersions": {
+	"ddsimVersion": "ILCSoft-02-02-03_cc7",
+	"ILDConfigVersion": "v02-02-03"
+    },
+    "jobParameters":{
+	"NumberOfEventsPerJob": 10,
+	"NumberOfJobsPerPoint": 3,
+	"output_dir": "test",
+	"LoopOn": [
+	    {"what":"Particle","subwhat":"ParticleEnergyInGeV","values":[25,35]},
+	    {"what":"Detector","subwhat":"DetectorName","values":["ILD_l2_v02","ILD_s2_v02"]}
+	    ]
+    }
+}
