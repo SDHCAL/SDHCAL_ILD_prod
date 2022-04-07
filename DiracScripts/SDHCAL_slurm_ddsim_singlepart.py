@@ -2,6 +2,7 @@ import os
 import json
 import CommonStep as CS
 import random
+import subprocess
 
 def mkdir_p(dir):
     '''make a directory (dir) if it doesn't exist'''
@@ -17,7 +18,7 @@ def sub_job_submit(jsdata,job_directory,Njob):
     for d in loopOn:
         fileBase+="_{0}_{1}".format(d['subwhat'],jsdata[d['what']][d['subwhat']])
     fileBase+="_{0}".format(Njob)
-    job_file=os.path.join(job_directory,"{0}.job".format(fileBase))
+    job_file=os.path.join(job_directory,"{0}.sh".format(fileBase))
     fich=open(job_file,'w')
     fich.write("#!/bin/bash\n")
     fich.write("#SBATCH --job-name=ddsim\n")
@@ -39,8 +40,8 @@ def sub_job_submit(jsdata,job_directory,Njob):
     command+=" --outputFile {0}".format(outputFile)
     fich.write("{0}\n".format(command))
 
-    os.system("chmod +x {0}".format(job_file))
-    os.system("sbatch {0}".format(job_file))
+    os.chmod(job_file,0o755)
+    subprocess.Popen(['bash','-l','-c',"sbatch {0}".format(job_file)])
     
 def job_submit(jsdata,job_directory):
     for Njob in range(jsdata['jobParameters']['NumberOfJobsPerPoint']):
