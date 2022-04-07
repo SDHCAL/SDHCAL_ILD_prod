@@ -10,7 +10,8 @@
     },
     "SoftwareVersions": {
 	"ddsimVersion": "ILCSoft-02-02-03_cc7",
-	"ILDConfigVersion": "v02-02-03"
+	"ILDConfigVersion": "v02-02-03",
+	"slurm_ilcsoftVersion": "x86_64_gcc82_centos7/v02-02-03"
     },
     "jobParameters":{
 	"NumberOfEventsPerJob": 10,
