@@ -16,7 +16,10 @@ def sub_job_submit(jsdata,job_directory,Njob):
     fileBase="ddsim"
     loopOn=jsdata['jobParameters']['LoopOn']
     for d in loopOn:
-        fileBase+="_{0}_{1}".format(d['subwhat'],jsdata[d['what']][d['subwhat']])
+        value=jsdata[d['what']][d['subwhat']]
+        if d['subwhat']=='DetectorName':
+            value=CS.detectorName(value)
+        fileBase+="_{0}_{1}".format(d['subwhat'],value)
     fileBase+="_{0}".format(Njob)
     job_file=os.path.join(job_directory,"{0}.sh".format(fileBase))
     fich=open(job_file,'w')
@@ -30,7 +33,6 @@ def sub_job_submit(jsdata,job_directory,Njob):
     fich.write("#SBATCH --error=ddsim_%j.out\n\n")
     fich.write("source /cvmfs/ilc.desy.de/sw/{0}/init_ilcsoft.sh\n".format(jsdata['SoftwareVersions']['slurm_ilcsoftVersion']))
     lcgeo_detector=jsdata['Detector']['DetectorName']
-    #human_detector=CS.detectorName(lcgeo_detector)
     outputFile=os.path.join(jsdata['jobParameters']['output_dir'],"{0}.slcio".format(fileBase))
     fich.write("rm {0}\n".format(outputFile))
     command="ddsim --compactFile $lcgeo_DIR/ILD/compact/{0}/{0}.xml ".format(lcgeo_detector)
