@@ -1,5 +1,6 @@
 import sys
 import json
+import CommonStep as CS
 #Magic DIRAC needed voodoo
 from DIRAC.Core.Base import Script
 Script.parseCommandLine()
@@ -37,20 +38,10 @@ def mySimJob(jsdata,Njobs=10,NeventsperJob=1000,output_dir="test"):
     #Is this setting correct for SDHCAL simulation ?
     ddsim.setSteeringFile("/cvmfs/ilc.desy.de/sw/ILDConfig/{0}/StandardConfig/production/ddsim_steer.py".format(jsdata['SoftwareVersions']['ILDConfigVersion']))
     ddsim.setEnergy(jsdata['Particle']['ParticleEnergyInGeV'])
-    extraCLIarg="--action.calo Geant4SimpleCalorimeterAction --enableDetailedShowerMode --physics.list {0} ".format(jsdata['Detector']['physicsList'])
-    extraCLIarg+="--enableGun --gun.particle {1} --gun.energy {0}*GeV ".format(jsdata['Particle']['ParticleEnergyInGeV'],jsdata['Particle']['ParticleName'])
-    extraCLIarg+='--gun.distribution "{0}" '.format(jsdata['Particle']['ParticleDistribution'])
+    extraCLIarg=CS.extraCLIargument(jsdata)
     ddsim.setExtraCLIArguments(extraCLIarg)
     #output file name should not be too long (less than 128 or 256 letters)
-    detector=jsdata['Detector']['DetectorName']
-    if detector=="ILD_l5_v02":
-        detector="LargeHybridTESLA"
-    if detector=="ILD_l2_v02":
-        detector="LargeVideau"
-    if detector=="ILD_s5_v02":
-        detector="SmallHybridTESLA"
-    if detector=="ILD_s2_v02":
-        detector="SmallVideau"
+    detector=CS.detectorName(jsdata['Detector']['DetectorName'])
     outputFileName="sim_{0}_single_{1}_{2}_GeV_{3}.slcio".format(detector,jsdata['Particle']['ParticleName'],jsdata['Particle']['ParticleEnergyInGeV'],NeventsperJob)
     ddsim.setOutputFile(outputFileName)
 
