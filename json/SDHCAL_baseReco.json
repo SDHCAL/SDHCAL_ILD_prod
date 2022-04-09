@@ -1,0 +1,28 @@
+{
+    "Detector":{
+	"DetectorName": "ILD_l2_v02",
+	"CalibDetectorName":  "automatic",
+	"CMSEnergy": 250
+    },
+    "SoftwareVersions": {
+	"marlinVersion": "ILCSoft-02-02-03_cc7",
+	"ILDConfigVersion": "v02-02-03",
+	"slurm_ilcsoftVersion": "x86_64_gcc82_centos7/v02-02-03"
+    },
+    "SDHCAL_Calibration": {
+	"SDHCALEnergyFactors":"0.0367023 0.0745279 0.363042",
+	"PandoraEcalToHadronicEnergyConversionBarrel":"1.28848786128075",
+	"PandoraEcalToHadronicEnergyConversionEndcap":"1.28848786128075",
+	"PandoraHcalToHadronicEnergyConversion":"0.96566858822654"
+    },
+    "JobParameters":{
+	"NumberOfEventsToProcessInFilePerJob": 0,
+	"NumberOfJobsPerFileIfSPlitFile": 0,
+	"output_dir": "test",
+	"InputFiles": [
+	    "/ilc/user/g/ggrenier/test/sim_LargeVideau_single_kaon0L_25_GeV_10_0.slcio",
+	    "/ilc/user/g/ggrenier/test/sim_LargeVideau_single_kaon0L_25_GeV_10_1.slcio",
+	    "/ilc/user/g/ggrenier/test/sim_LargeVideau_single_kaon0L_25_GeV_10_2.slcio"	    
+	    ]
+    }
+}

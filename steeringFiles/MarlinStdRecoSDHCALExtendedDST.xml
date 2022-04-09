@@ -1,0 +1,130 @@
+<!-- 
+  Top level Marlin steering file defining the ILD reconstruction chain.
+  
+  !! WARNING !! This file may have been generated from 'Marlin -n MarlinstdReco.xml'. 
+  In this case you will find that : 
+  - some values differ between the constants section and the actual values in the global section or the processor parameter (e.g the compact file).
+    In this case, please refer to values in the global section or the processor parameters and not the constants section ! 
+  
+  Mandatory parameters :
+    * global.LCIOInputFiles : The input lcio input file(s)
+    * constant.lcgeo_DIR : the lcgeo directory must point on the one sourced in your current ilcsoft
+  
+  Optional parameters :
+    * constant.DetectorModel : the detector model to use the pre-defined lcgeo_DIR as ${lcgeo_DIR}/ILD/compact/${DetectorModel}/${DetectorModel}.xml
+
+  Author : Gerald Grenier, IP2I derived from Remi Ete, DESY
+-->
+
+
+<marlin>
+  <constants>
+    <!-- ***** Global constant for reconstruction ***** -->
+    <!-- The lcgeo directory where to look for the ILD model -->
+    <constant name="lcgeo_DIR" value="/path/to/lcgeo_DIR" />
+    <!-- ILD detector model -->
+    <constant name="DetectorModel" value="None_Please_specify_one" />
+    <!-- The full compact file name -->
+    <constant name="CompactFile" value="${lcgeo_DIR}/ILD/compact/${DetectorModel}/${DetectorModel}.xml" />
+
+      
+    <!-- Output files constants -->
+    <constant name="OutputBaseName" value="StandardReco" />
+    <constant name="AIDAFileName" value="${OutputBaseName}_extAIDA" />
+    <constant name="extendedDSTOutputFile" value="${OutputBaseName}_extDST.slcio" />
+
+    <!-- extra REC collection to keep -->
+    <constant name="RedoPFAcollections" value="EcalBarrelCollectionRec EcalBarrelCollectionGapHits EcalEndcapsCollectionRec EcalEndcapsCollectionGapHits EcalEndcapRingCollectionRec HcalBarrelCollectionRec HcalEndcapsCollectionRec HcalEndcapRingCollectionRec LCAL LHCAL MUON MCParticle KinkVertices ProngVertices SplitVertices V0Vertices" />
+    <constant name="RedoSDHCALDigitisationCollections" value="HCalBarrelRPCHits HCalEndcapRPCHits HCalECRingRPCHits" />
+  </constants>
+  
+  
+  <!-- ***** Execute section ***** -->
+  <execute>
+    <!-- Initialization processors -->
+    <processor name="MyAIDAProcessor" />
+    <processor name="InitDD4hep" />
+    <processor name="MyStatusmonitor" />
+    
+    <!-- Output processors -->
+    <processor name="extendedDSTOutput" />
+  </execute>
+  
+  <!-- ***** Global section ***** -->
+  <global>
+    <parameter name="LCIOInputFiles"> </parameter>
+    <parameter name="MaxRecordNumber" value="0"/>
+    <parameter name="SkipNEvents" value="0"/>
+    <parameter name="SupressCheck" value="false"/>
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> MESSAGE </parameter>
+    <parameter name="RandomSeed" value="1234567890" />
+    <parameter name="OutputSteeringFile" value="MarlinStdRecoSDHCALExtendedDSTParsed.xml"/>
+  </global>
+  
+  <!-- Init processors : histograming, logging, geometry ... -->
+  <processor name="MyAIDAProcessor" type="AIDAProcessor">
+    <!--Processor that handles AIDA files. Creates on directory per processor.  Processors only need to create and fill the histograms, clouds and tuples. Needs to be the first ActiveProcessor-->
+    <!-- compression of output file 0: false >0: true (default) -->
+    <parameter name="Compress" type="int" value="1"/>
+    <!-- filename without extension-->
+    <parameter name="FileName" type="string" value="${AIDAFileName}"/>
+    <!-- type of output file xml (default) or root ( only OpenScientist)-->
+    <parameter name="FileType" type="string" value="root "/>
+  </processor>
+  <processor name="InitDD4hep" type="InitializeDD4hep">
+    <!--InitializeDD4hep reads a compact xml file and initializes the DD4hep::LCDD object-->
+    <!--Name of the DD4hep compact xml file to load-->
+    <parameter name="DD4hepXMLFile" type="string"> ${CompactFile} </parameter>
+  </processor>
+  <processor name="MyStatusmonitor" type="Statusmonitor">
+    <!--Statusmonitor prints out information on running Marlin Job: Prints number of runs run and current number of the event. Counting is sequential and not the run or event ID.-->
+    <!--Print the event number every N events-->
+    <parameter name="HowOften" type="int">1 </parameter>
+    <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+    <!-- <parameter name="Verbosity" type="string">MESSAGE </parameter> -->
+  </processor>
+
+
+
+  
+  <!-- Write reconstruction output : extended DST -->
+  <processor name="extendedDSTOutput" type="LCIOOutputProcessor">
+    <!-- DST output: drop all hits, skim MCParticles and keep final Tracks, Clusters, Vertices and  ReconstructedParticles -->
+    <parameter name="LCIOOutputFile" type="string" >
+      ${extendedDSTOutputFile}
+    </parameter>
+    <parameter name="DropCollectionTypes" type="StringVec"> 
+      MCParticle 
+      SimTrackerHit 
+      SimCalorimeterHit
+      TrackerHit 
+      TrackerHitPlane 
+      CalorimeterHit 
+      LCRelation
+      Track 
+      LCFloatVec      
+    </parameter>
+    <parameter name="DropCollectionNames" type="StringVec">
+      PandoraPFANewStartVertices
+    </parameter>
+    <!--parameter name="FullSubsetCollections" type="StringVec" value="MCParticlesSkimmed"/-->
+    <parameter name="KeepCollectionNames" type="StringVec"> 
+      MCParticlesSkimmed
+      MarlinTrkTracks
+      MarlinTrkTracksProton
+      MarlinTrkTracksKaon
+      MCTruthMarlinTrkTracksLink
+      MarlinTrkTracksMCTruthLink
+      RecoMCTruthLink
+      MCTruthRecoLink
+      MCTruthClusterLink
+      ClusterMCTruthLink
+      ${RedoPFAcollections}
+      ${RedoSDHCALDigitisationCollections}
+    </parameter>
+    <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
+    <parameter name="CompressionLevel" type="int" value="6"/>
+    <!--parameter name="SplitFileSizekB" type="int" value="1992294"/-->
+  </processor>
+  
+</marlin>
