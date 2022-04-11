@@ -44,6 +44,7 @@ def myRecoJob(jsdata,dirac,inputFileNames,NeventsPerFile=0,NeventsPerJob=0):
         if len(fileList) > 1:
             job.setSplitInputData(fileList)
         else:
+            job.setInputData(fileList[0])
             singleJob=True
     base_output_name="reco_"+os.path.splitext(os.path.basename(fileList[0]))[0]
     #remove eventual file job simulation number assuming list of identical files is given
@@ -60,7 +61,7 @@ def myRecoJob(jsdata,dirac,inputFileNames,NeventsPerFile=0,NeventsPerJob=0):
     ma = Marlin()
     ma.setVersion(jsdata['SoftwareVersions']['marlinVersion'])
     if singleJob:
-        ma.setInputFile(fileList[0])
+        ma.setInputFile(os.path.basename(fileList[0]))
         if NeventsPerFile !=0:
             ma.setNumberOfEvents(NeventsPerFile)
     ma.setSteeringFile("MarlinStdReco.xml")
