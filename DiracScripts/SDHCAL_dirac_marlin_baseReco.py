@@ -46,13 +46,14 @@ def myRecoJob(jsdata,dirac,inputFileNames,NeventsPerFile=0,NeventsPerJob=0):
         else:
             singleJob=True
     base_output_name="reco_"+os.path.splitext(os.path.basename(fileList[0]))[0]
-    #remove eventual file job similation number assuming list of identical files is given
+    #remove eventual file job simulation number assuming list of identical files is given
+    split_cleaning=jsdata['JobParameters']['output_base_name_remove']
+    base_output_name=base_output_name.rsplit(split_cleaning['split_character'],split_cleaning['split_number'])[0]
     if not singleJob:
-        base_output_name=base_output_name.rsplit('_',1)[0]
         if NeventsPerFile>0:
             base_output_name+="_reco_{0}".format(NeventsPerFile)
     if NeventsPerJob>0:
-        base_output_name+="_reco_{0}".format(NeventsPerFile/NeventsPerJob)
+        base_output_name+="_reco_{0}".format(NeventsPerJob)
     
     #Marlin application
     #First standard reco with Pandora Truth
@@ -114,11 +115,18 @@ def myRecoJob(jsdata,dirac,inputFileNames,NeventsPerFile=0,NeventsPerJob=0):
     
 if __name__ == '__main__':
     #manageParameters
-    fp=open("json/SDHCAL_baseReco.json")
+    jsonFile="json/SDHCAL_baseReco.json"
+    if len(sys.argv)==2:
+        jsonFile=sys.argv[1]
+    fp=open(jsonFile)
     js=json.load(fp)
     #create the object that will managed the job submission
     dirac = DiracILC(True,"reco.rep")
     #submit the jobs
     JobParams=js['JobParameters']
-    myRecoJob(js,dirac,JobParams['InputFiles'],NeventsPerFile=JobParams['NumberOfEventsToProcessInFilePerJob'],NeventsPerJob=JobParams['NumberOfJobsPerFileIfSPlitFile'])
+    NeventsPerFile=JobParams['NumberOfEventsToProcessInFilePerJob']
+    NeventsPerJob=JobParams['NumberOfJobsPerFileIfSPlitFile']
+    if NeventsPerJob!=0:
+        NeventsPerJob=NeventsPerFile/NeventsPerJob
+    myRecoJob(js,dirac,JobParams['InputFiles'],NeventsPerFile,NeventsPerJob)
     
