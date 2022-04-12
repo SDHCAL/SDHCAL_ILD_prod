@@ -4,11 +4,6 @@ import CommonStep as CS
 import random
 import subprocess
 
-def mkdir_p(dir):
-    '''make a directory (dir) if it doesn't exist'''
-    if not os.path.exists(dir):
-        os.mkdir(dir)
-
 
 def sub_job_submit(jsdata,job_directory,Njob):
     million=1000000
@@ -64,9 +59,9 @@ def jobLoop(jsdata,level,job_directory):
 if __name__ == '__main__':
     random.seed()
     job_directory="{0}/slurm_jobs".format(os.getcwd())
-    mkdir_p(job_directory)
+    CS.mkdir_p(job_directory)
     fp=open("json/SinglePartSim.json")
     js=json.load(fp)
-    mkdir_p(js['jobParameters']['output_dir'])
+    CS.mkdir_p(js['jobParameters']['output_dir'])
     jobLoop(js,len(js['jobParameters']['LoopOn'])-1,job_directory)
 

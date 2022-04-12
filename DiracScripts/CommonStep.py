@@ -1,4 +1,10 @@
 import json
+import os
+
+def mkdir_p(dir):
+    '''make a directory (dir) if it doesn't exist'''
+    if not os.path.exists(dir):
+        os.mkdir(dir)
 
 def raiseDecodeError(badkey):
     message='["JobParameters"]["InputFilesToJobsRatio"] is {0}. Authorized values are 1-to-n and n-to-1 with n an integer.'.format(badkey)
