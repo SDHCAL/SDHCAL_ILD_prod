@@ -11,18 +11,11 @@ from ILCDIRAC.Interfaces.API.DiracILC import DiracILC
 from ILCDIRAC.Interfaces.API.NewInterface.UserJob import  UserJob
 from ILCDIRAC.Interfaces.API.NewInterface.Applications import Marlin
 
-def myRecoJob(jsdata,dirac,inputFileNames,NeventsPerFile=0,NeventsPerJob=0):
+def myRecoJob(jsdata,dirac):
     """Create reco job
     :param jsdata :: json job parameters 
-    :param inputFileNames :: list of string with full filenames in Dirac File Catalog or single string with the filename
-    :param int NeventsPerFile :: number of events in the file to process (0 means all)
-    :param int NeventsPerJob :: number of events to process in one job, one input file is splitted across many jobs. If set to something else than 0, NeventsPerFile should be set to non zero value.
-    When using NeventsPerFile, user should check the total number of events in his files to make sure  all events will be processed
+    :param dirac :: the ILCDirac u=interface
     """
-    fileList=inputFileNames  if isinstance(inputFileNames, list) else [inputFileNames]
-    if NeventsPerJob>0 and NeventsPerFile==0:
-        raise ValueError("Parameter NeventsPerFile should not be zero when NeventsPerJob is set to a non zero value.")
-
     #definition of the job and some of its properties
     job = UserJob()
     #job names
@@ -37,31 +30,29 @@ def myRecoJob(jsdata,dirac,inputFileNames,NeventsPerFile=0,NeventsPerJob=0):
     
     job.setILDConfig(jsdata['SoftwareVersions']['ILDConfigVersion'])
     job.setInputSandbox(["steeringFiles/MarlinStdRecoSDHCALExtendedDST.xml"])
-    singleJob=False
-    if NeventsPerJob>0:
-        job.setSplitFilesAcrossJobs(fileList, NeventsPerFile, NeventsPerJob)
-    else:
-        if len(fileList) > 1:
-            job.setSplitInputData(fileList)
-        else:
-            job.setInputData(fileList[0])
-            singleJob=True
+    fileList=jsdata['JobParameters']['InputFiles']
     base_output_name="reco_"+os.path.splitext(os.path.basename(fileList[0]))[0]
     #remove eventual file job simulation number assuming list of identical files is given
     split_cleaning=jsdata['JobParameters']['output_base_name_remove']
     base_output_name=base_output_name.rsplit(split_cleaning['split_character'],split_cleaning['split_number'])[0]
-    if not singleJob:
-        if NeventsPerFile>0:
-            base_output_name+="_reco_{0}".format(NeventsPerFile)
-    if NeventsPerJob>0:
-        base_output_name+="_reco_{0}".format(NeventsPerJob)
+    jobMode=CS.decodeInputFileParameters(jsdata)
+    if jobMode["mode"]=="splitInput":
+        job.setSplitInputData(fileList,jobMode["FilesPerJob"])
+    if jobMode["mode"]=="splitFiles":
+        job.setSplitFilesAcrossJobs(fileList,jobMode["EventsPerFile"],jobMode["EventsPerJob"])
+        base_output_name+="_reco_{0}".format(jobMode["EventsPerJob"])
+    if jobMode["mode"]=="single":
+        job.setInputData(fileList[0])
+        if jobMode["Nevents"] != 0:
+            base_output_name+="_reco_{0}".format(jobMode["Nevents"])
     
     #Marlin application
     #First standard reco with Pandora Truth
     ma = Marlin()
     ma.setVersion(jsdata['SoftwareVersions']['marlinVersion'])
-    if singleJob:
+    if jobMode["mode"]=="single":
         ma.setInputFile(os.path.basename(fileList[0]))
+        NeventsPerFile=jobMode["Nevents"]
         if NeventsPerFile !=0:
             ma.setNumberOfEvents(NeventsPerFile)
     ma.setSteeringFile("MarlinStdReco.xml")
@@ -124,10 +115,5 @@ if __name__ == '__main__':
     #create the object that will managed the job submission
     dirac = DiracILC(True,"reco.rep")
     #submit the jobs
-    JobParams=js['JobParameters']
-    NeventsPerFile=JobParams['NumberOfEventsToProcessInFilePerJob']
-    NeventsPerJob=JobParams['NumberOfJobsPerFileIfSPlitFile']
-    if NeventsPerJob!=0:
-        NeventsPerJob=NeventsPerFile/NeventsPerJob
-    myRecoJob(js,dirac,JobParams['InputFiles'],NeventsPerFile,NeventsPerJob)
+    myRecoJob(js,dirac)
     

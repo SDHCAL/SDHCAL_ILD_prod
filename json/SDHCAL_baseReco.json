@@ -16,8 +16,8 @@
 	"PandoraHcalToHadronicEnergyConversion":"0.96566858822654"
     },
     "JobParameters":{
-	"NumberOfEventsToProcessInFilePerJob": 0,
-	"NumberOfJobsPerFileIfSPlitFile": 0,
+	"NumberOfEventsPerFile": 0,
+	"InputFilesToJobsRatio": "1-to-1",
 	"output_dir": "test",
 	"output_base_name_remove": { "split_character": "_", "split_number": 1},
 	"InputFiles": [
