@@ -60,7 +60,10 @@ if __name__ == '__main__':
     random.seed()
     job_directory="{0}/slurm_jobs".format(os.getcwd())
     CS.mkdir_p(job_directory)
-    fp=open("json/SinglePartSim.json")
+    jsonFile="json/SinglePartSim.json"
+    if len(sys.argv)==2:
+        jsonFile=sys.argv[1]
+    fp=open(jsonFile)
     js=json.load(fp)
     CS.mkdir_p(js['jobParameters']['output_dir'])
     jobLoop(js,len(js['jobParameters']['LoopOn'])-1,job_directory)
