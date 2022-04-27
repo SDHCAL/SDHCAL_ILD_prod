@@ -62,7 +62,7 @@ The parameters in the json file are the following :
  * CMSEnergy : This parameter should correspond to a file in ILDConfig under `ILDConfig/StandardConfig/production/Config/Parameters<CMSEnergy>GeV.xml`. 
 * SoftwareVersions 
  * marlinVersion : the Marlin version to use when using ILCDirac. To know which versions are available, run `dirac-ilc-show-software`
- * ILDConfigVersion : the ILDConfig version to use. See the same parameter in previous section to details how the parameter is handled.
+ * ILDConfigVersion : the ILDConfig version to use. See the same parameter in [previous section](https://github.com/SDHCAL/SDHCAL_ILD_prod#single-particle-simulation) to details how the parameter is handled.
  * slurm\_ilcsoftVersion : the ilcsoft version to use when using slurm. The ilcsoft directory is defined as `/cvmfs/ilc.desy.de/sw/<slurm_ilcsoftVersion>/`
 * SDHCAL_Calibration : The values in the example files comes from Bo Li's studies with hybrid detector and linear energy reconstruction
  * SDHCALEnergyFactors : A list of 3 real parameters to assign an individual hit energy value for each of the 3 SDHCAL thresholds. Meaningful only when using linear SDHCAL energy reconstruction.
@@ -75,7 +75,7 @@ The parameters in the json file are the following :
   * `n-1` with more than one input files : n can be equal to 1. The input file lists will be split in group of n files. Each file group will be entirely processed by one job.
   * `1-n` with n greater than 1 : each input file will be processed by n jobs. The number of events in each file should be specified by the parameter NumberOfEventsPerFile
  * NumberOfEventsPerFile : either the number of event to process when only one input file and one job or the number of events in a single file when InputFilesToJobsRatio is set to `1-n` mode with n greater than 1.
- * output\_dir : see previous section to see how this parameter is treated
+ * output\_dir : see [previous section](https://github.com/SDHCAL/SDHCAL_ILD_prod#single-particle-simulation) to see how this parameter is treated
  * output\_base\_name\_remove : the name of the first input file without its extension is used as the basename for the output files. We can remove some portion of the end of the file basename. The parameters describe how the removal is done :
   * split\_character : the character used to separate fields in the file basename
   * split\_number : the number of fields to remove at the end of the file basename
