@@ -16,13 +16,14 @@ The slurm batch system uses a mail to communicate with you. Before running the s
 
 ## running the scripts
 To run the script, you should be located in the directory where this README file is located and enter : `python DiracScripts/<script>.py` where script should be replaced by the name of the python script.
+For all scripts, you can change the json file used for launching the jobs by adding its name on the command line : `python DiracScripts/<script>.py <jsonFile>` 
 
 # Single particle simulation 
 The scripts to produce single particle ILD simulation are 
 * `SDHCAL_dirac_ddsim_singlepart.py` to run simulation jobs on the ILCDirac grid
 * `SDHCAL_slurm_ddsim_singlepart.py` to run simulation jobs on slurm batch machines
 
-The script parameters are controlled by a json file. An example of json for single particle production can be found in `json/SinglePartSim.json`
+The script parameters are controlled by a json file. The default json file for single particle production can be found in `json/SinglePartSim.json`
 The parameters in the json file are the following :
 * Particle
  * ParticleName : the name of the particle in ddsim/GEANT4 format
@@ -53,7 +54,7 @@ The scripts to run standard ILD reconstruction from a simulation output are :
 * `SDHCAL_dirac_marlin_baseReco.py` to run reconstruction jobs on the ILCDirac grid
 * `SDHCAL_slurm_marlin_baseReco.py` to run reconstruction jobs on slurm batch machines
 
-The script parameters are controlled by a json file. An example of json for single particle production can be found in `json/SDHCAL_baseReco.json`
+The script parameters are controlled by a json file. The default json file for single particle production can be found in `json/SDHCAL_baseReco.json`
 The parameters in the json file are the following :
 * Detector
  * DetectorName : The name of the detector. It should correspond to the detector name used to run ddsim.
