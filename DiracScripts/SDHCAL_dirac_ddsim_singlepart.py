@@ -74,7 +74,10 @@ def jobLoop(jsdata,level,dirac):
 
 if __name__ == '__main__':
     #manageParameters
-    fp=open("json/SinglePartSim.json")
+    jsonFile="json/SinglePartSim.json"
+    if len(sys.argv)==2:
+        jsonFile=sys.argv[1]
+    fp=open(jsonFile)
     js=json.load(fp)
     #create the object that will managed the job submission
     dirac = DiracILC(True,"simu.rep")
