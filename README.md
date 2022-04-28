@@ -50,9 +50,18 @@ The parameters in the json file are the following :
     * values : the list of values to loop on. Each value here corresponds to a set of parameters for what concerned NumberOfJobsPerPoint.
 
 # Standard reconstruction
+The standard reconstruction here consists in running the standard ILD Marlin reconstruction with PerfectPFA from PandoraPFA followed by running a second Marlin to extract from the REC file an extended DST file containing :
+* the standard DST data,
+* All calorimeter hits to be able to rerun the PFA,
+* All SDHCAL simcalorimeter hits to be able to rerun the digitizer.
+
+
 The scripts to run standard ILD reconstruction from a simulation output are :
 * `SDHCAL_dirac_marlin_baseReco.py` to run reconstruction jobs on the ILCDirac grid
 * `SDHCAL_slurm_marlin_baseReco.py` to run reconstruction jobs on slurm batch machines
+
+When running slurm jobs, all produced files (LCIO REC, DST, and extended DST and all ROOT files) are stored in the output directory.
+When running ILCDirac jobs, the LCIO REC, extended DST and the PFOAnalysis ROOT files are stored in the output directory.
 
 The script parameters are controlled by a json file. The default json file for single particle production can be found in `json/SDHCAL_baseReco.json`
 The parameters in the json file are the following :
