@@ -11,7 +11,8 @@ source /cvmfs/clicdp.cern.ch/DIRAC/bashrc
 dirac-proxy-init -g ilc_user
 ```
 ## Slurm batch specifics
-The slurm batch machine you are using should have an access to the `/cvmfs/ilc.desy.de/` directory.
+By default, the slurm batch machine you are using should have an access to the `/cvmfs/ilc.desy.de/` directory.
+You can specify a different directory to the ilcsoft directory using an optional parameters in the json file.
 The slurm batch system uses a mail to communicate with you. Before running the script for slurm, you need to provide your e-mail in an environment variable named `USER_MAIL`.
 
 ## running the scripts
@@ -35,9 +36,11 @@ The parameters in the json file are the following :
 * SoftwareVersions
   * ddsimVersion : the ddsim version to use when using ILCDirac. To know which versions are available, run `dirac-ilc-show-software`
   * slurm\_ilcsoftVersion : the ilcsoft version to use when using slurm. The ilcsoft directory is defined as `/cvmfs/ilc.desy.de/sw/<slurm_ilcsoftVersion>/`
+  * ilcsoftBaseDir : optional parameters to overload the ilcsoft directory. If present, the ilcsoft directory is defined as `<ilcsoftBaseDir>/<slurm_ilcsoftVersion>/`
   * ILDConfigVersion : the ILDConfig version to use.
     * For ILCDirac, run `dirac-ilc-show-software` to know which version are available
     * For slurm, the ILDConfig version will be in `/cvmfs/ilc.desy.de/sw/ILDConfig/<ILDConfigVersion>/`
+    * For slurm, if the ilcsoftBaseDir parameter is present, then the ILDConfig version will be in `<ilcsoftBaseDir>/ILDConfig/<ILDConfigVersion>/`
 * jobParameters
   * NumberOfEventsPerJob : the number of events per job.
   * NumberOfJobsPerPoint : the number of job to run per set of parameters. Forr a given set of parameters, this corresponds to the number of produced files. Each file will contain NumberOfEventsPerJob events.

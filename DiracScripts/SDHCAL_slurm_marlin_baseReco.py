@@ -22,9 +22,9 @@ def reco_sub_job_submit(jsdata,job_directory,inputFiles,Nevent,skipEvent):
     fich.write("#SBATCH --mail-user={0}\n".format(os.environ['USER_MAIL']))
     fich.write("#SBATCH --output=reco_%j.out\n")
     fich.write("#SBATCH --error=reco_%j.out\n\n")
-    fich.write("source /cvmfs/ilc.desy.de/sw/{0}/init_ilcsoft.sh\n".format(jsdata['SoftwareVersions']['slurm_ilcsoftVersion']))
+    fich.write("source {1}/{0}/init_ilcsoft.sh\n".format(jsdata['SoftwareVersions']['slurm_ilcsoftVersion'],jsdata['SoftwareVersions'].get('ilcsoftBaseDir','/cvmfs/ilc.desy.de/sw')))
     fich.write("cd /scratch\n")
-    fich.write("cp -R  /cvmfs/ilc.desy.de/sw/ILDConfig/{0}/StandardConfig/production/ .\n".format(jsdata['SoftwareVersions']['ILDConfigVersion']))
+    fich.write("cp -R {1}/ILDConfig/{0}/StandardConfig/production/ .\n".format(jsdata['SoftwareVersions']['ILDConfigVersion'],jsdata['SoftwareVersions'].get('ilcsoftBaseDir','/cvmfs/ilc.desy.de/sw')))
     fich.write("cd production\n")
     fich.write("cp {0}/steeringFiles/MarlinStdRecoSDHCALExtendedDST.xml .\n".format(os.getcwd()))
     output_dir=jsdata['JobParameters']['output_dir']
