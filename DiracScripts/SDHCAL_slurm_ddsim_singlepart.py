@@ -9,7 +9,7 @@ def sub_job_submit(jsdata,job_directory,Njob):
     million=1000000
     myRandom=random.randint(million,100*million)
     fileBase="ddsim"
-    loopOn=jsdata['jobParameters']['LoopOn']
+    loopOn=jsdata['JobParameters']['LoopOn']
     for d in loopOn:
         value=jsdata[d['what']][d['subwhat']]
         if d['subwhat']=='DetectorName':
@@ -28,12 +28,12 @@ def sub_job_submit(jsdata,job_directory,Njob):
     fich.write("#SBATCH --error=ddsim_%j.out\n\n")
     fich.write("source {1}/{0}/init_ilcsoft.sh\n".format(jsdata['SoftwareVersions']['slurm_ilcsoftVersion'],jsdata['SoftwareVersions'].get('ilcsoftBaseDir','/cvmfs/ilc.desy.de/sw')))
     lcgeo_detector=jsdata['Detector']['DetectorName']
-    outputFile=os.path.join(jsdata['jobParameters']['output_dir'],"{0}.slcio".format(fileBase))
+    outputFile=os.path.join(jsdata['JobParameters']['output_dir'],"{0}.slcio".format(fileBase))
     fich.write("rm {0}\n".format(outputFile))
     command="ddsim --compactFile $lcgeo_DIR/ILD/compact/{0}/{0}.xml ".format(lcgeo_detector)
     command+=CS.extraCLIargument(jsdata)
     command+=" --steeringFile {1}/ILDConfig/{0}/StandardConfig/production/ddsim_steer.py".format(jsdata['SoftwareVersions']['ILDConfigVersion'],jsdata['SoftwareVersions'].get('ilcsoftBaseDir','/cvmfs/ilc.desy.de/sw'))
-    command+=" --numberOfEvents {0} --random.seed {1}".format(jsdata['jobParameters']['NumberOfEventsPerJob'],myRandom)
+    command+=" --numberOfEvents {0} --random.seed {1}".format(jsdata['JobParameters']['NumberOfEventsPerJob'],myRandom)
     command+=" --outputFile {0}".format(outputFile)
     fich.write("{0}\n".format(command))
 
@@ -41,17 +41,17 @@ def sub_job_submit(jsdata,job_directory,Njob):
     subprocess.Popen(['bash','-l','-c',"sbatch {0}".format(job_file)])
     
 def job_submit(jsdata,job_directory):
-    for Njob in range(jsdata['jobParameters']['NumberOfJobsPerPoint']):
+    for Njob in range(jsdata['JobParameters']['NumberOfJobsPerPoint']):
         sub_job_submit(jsdata,job_directory,Njob)
         
 def jobLoop(jsdata,level,job_directory):
      if level==-1:
-        #jobPar=jsdata['jobParameters']
+        #jobPar=jsdata['JobParameters']
         #job = mySimJob(jsdata,Njobs=jobPar['NumberOfJobsPerPoint'],NeventsperJob=jobPar['NumberOfEventsPerJob'],output_dir=jobPar['output_dir'])
         #submit the job 
         job_submit(jsdata,job_directory)
      else:
-        loopon=jsdata['jobParameters']['LoopOn'][level]
+        loopon=jsdata['JobParameters']['LoopOn'][level]
         for d in loopon['values']:
             jsdata[loopon['what']][loopon['subwhat']]=d
             jobLoop(jsdata,level-1,job_directory)
@@ -65,6 +65,6 @@ if __name__ == '__main__':
         jsonFile=sys.argv[1]
     fp=open(jsonFile)
     js=json.load(fp)
-    CS.mkdir_p(js['jobParameters']['output_dir'])
-    jobLoop(js,len(js['jobParameters']['LoopOn'])-1,job_directory)
+    CS.mkdir_p(js['JobParameters']['output_dir'])
+    jobLoop(js,len(js['JobParameters']['LoopOn'])-1,job_directory)
 

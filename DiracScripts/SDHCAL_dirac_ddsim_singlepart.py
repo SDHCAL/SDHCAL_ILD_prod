@@ -61,13 +61,13 @@ def mySimJob(jsdata,Njobs=10,NeventsperJob=1000,output_dir="test"):
 
 def jobLoop(jsdata,level,dirac):
     if level==-1:
-        jobPar=jsdata['jobParameters']
+        jobPar=jsdata['JobParameters']
         job = mySimJob(jsdata,Njobs=jobPar['NumberOfJobsPerPoint'],NeventsperJob=jobPar['NumberOfEventsPerJob'],output_dir=jobPar['output_dir'])
         #submit the job 
         print job.submit(dirac)
         #print jsdata
     else:
-        loopon=jsdata['jobParameters']['LoopOn'][level]
+        loopon=jsdata['JobParameters']['LoopOn'][level]
         for d in loopon['values']:
             jsdata[loopon['what']][loopon['subwhat']]=d
             jobLoop(jsdata,level-1,dirac)
@@ -82,5 +82,5 @@ if __name__ == '__main__':
     #create the object that will managed the job submission
     dirac = DiracILC(True,"simu.rep")
     #submit the jobs
-    jobLoop(js,len(js['jobParameters']['LoopOn'])-1,dirac)
+    jobLoop(js,len(js['JobParameters']['LoopOn'])-1,dirac)
 

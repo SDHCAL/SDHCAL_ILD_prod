@@ -13,7 +13,7 @@
 	"ILDConfigVersion": "v02-02-03",
 	"slurm_ilcsoftVersion": "x86_64_gcc82_centos7/v02-02-03"
     },
-    "jobParameters":{
+    "JobParameters":{
 	"NumberOfEventsPerJob": 10,
 	"NumberOfJobsPerPoint": 3,
 	"output_dir": "test",
