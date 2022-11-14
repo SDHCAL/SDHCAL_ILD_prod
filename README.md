@@ -10,6 +10,7 @@ For using the ILCDirac grid, you need to initialise with the following code :
 source /cvmfs/clicdp.cern.ch/DIRAC/bashrc
 dirac-proxy-init -g ilc_user
 ```
+Note that, for the moment ILCDirac is compatible with python 2 only.
 ## Slurm batch specifics
 The slurm batch machine you are using should have an access to the `/cvmfs/ilc.desy.de/` directory.
 The slurm batch system uses a mail to communicate with you. Before running the script for slurm, you need to provide your e-mail in an environment variable named `USER_MAIL`.
