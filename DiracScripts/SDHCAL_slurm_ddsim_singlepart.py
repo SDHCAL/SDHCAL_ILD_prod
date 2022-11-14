@@ -3,7 +3,7 @@ import json
 import CommonStep as CS
 import random
 import subprocess
-
+import sys
 
 def sub_job_submit(jsdata,job_directory,Njob):
     million=1000000
