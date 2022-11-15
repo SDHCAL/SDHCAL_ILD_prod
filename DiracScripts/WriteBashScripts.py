@@ -54,6 +54,7 @@ def create_ddsim_bash_script(jsdata,job_directory,job_number,with_slurm_header):
     command+=" --numberOfEvents {0} --random.seed {1}".format(jsdata['JobParameters']['NumberOfEventsPerJob'],myRandom)
     command+=" --outputFile {0}".format(outputFile)
     fich.write("{0}\n".format(command))
+    return job_file
 
 def create_marlin_bash_script(jsdata,job_directory,inputFiles,Nevent,skipEvent,with_slurm_header):
     base_output_name="reco_"+os.path.splitext(os.path.basename(inputFiles[0]))[0]
