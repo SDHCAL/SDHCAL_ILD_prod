@@ -1,70 +1,44 @@
 import os
 import json
 import CommonStep as CS
+import WriteBashScripts as wbash
 import random
 import subprocess
 import sys
 
-def sub_job_submit(jsdata,job_directory,Njob):
-    million=1000000
-    myRandom=random.randint(million,100*million)
-    fileBase="ddsim"
-    loopOn=jsdata['JobParameters']['LoopOn']
-    for d in loopOn:
-        value=jsdata[d['what']][d['subwhat']]
-        if d['subwhat']=='DetectorName':
-            value=CS.detectorName(value)
-        fileBase+="_{0}_{1}".format(d['subwhat'],value)
-    fileBase+="_{0}".format(Njob)
-    job_file=os.path.join(job_directory,"{0}.sh".format(fileBase))
-    fich=open(job_file,'w')
-    fich.write("#!/bin/bash\n")
-    fich.write("#SBATCH --job-name=ddsim\n")
-    fich.write("#SBATCH --ntasks=1\n")
-    fich.write("#SBATCH --time=24:00:00\n")
-    fich.write("#SBATCH --mail-type=ALL\n")  
-    fich.write("#SBATCH --mail-user={0}\n".format(os.environ['USER_MAIL']))
-    fich.write("#SBATCH --output=ddsim_%j.out\n")
-    fich.write("#SBATCH --error=ddsim_%j.out\n\n")
-    fich.write("source {1}/{0}/init_ilcsoft.sh\n".format(jsdata['SoftwareVersions']['slurm_ilcsoftVersion'],jsdata['SoftwareVersions'].get('ilcsoftBaseDir','/cvmfs/ilc.desy.de/sw')))
-    lcgeo_detector=jsdata['Detector']['DetectorName']
-    outputFile=os.path.join(jsdata['JobParameters']['output_dir'],"{0}.slcio".format(fileBase))
-    fich.write("rm {0}\n".format(outputFile))
-    command="ddsim --compactFile $lcgeo_DIR/ILD/compact/{0}/{0}.xml ".format(lcgeo_detector)
-    command+=CS.extraCLIargument(jsdata)
-    command+=" --steeringFile {1}/ILDConfig/{0}/StandardConfig/production/ddsim_steer.py".format(jsdata['SoftwareVersions']['ILDConfigVersion'],jsdata['SoftwareVersions'].get('ilcsoftBaseDir','/cvmfs/ilc.desy.de/sw'))
-    command+=" --numberOfEvents {0} --random.seed {1}".format(jsdata['JobParameters']['NumberOfEventsPerJob'],myRandom)
-    command+=" --outputFile {0}".format(outputFile)
-    fich.write("{0}\n".format(command))
-
-    os.chmod(job_file,0o755)
-    subprocess.Popen(['bash','-l','-c',"sbatch {0}".format(job_file)])
+def sub_job_submit(jsdata,job_directory,Njob,real_submit):
+    job_file=wbash.create_ddsim_bash_script(jsdata,job_directory,Njob,True)
+    if real_submit:
+        subprocess.Popen(['bash','-l','-c',"sbatch {0}".format(job_file)])
     
-def job_submit(jsdata,job_directory):
+def job_submit(jsdata,job_directory,real_submit):
     for Njob in range(jsdata['JobParameters']['NumberOfJobsPerPoint']):
-        sub_job_submit(jsdata,job_directory,Njob)
+        sub_job_submit(jsdata,job_directory,Njob,real_submit)
         
-def jobLoop(jsdata,level,job_directory):
+def jobLoop(jsdata,level,job_directory,real_submit):
      if level==-1:
         #jobPar=jsdata['JobParameters']
         #job = mySimJob(jsdata,Njobs=jobPar['NumberOfJobsPerPoint'],NeventsperJob=jobPar['NumberOfEventsPerJob'],output_dir=jobPar['output_dir'])
         #submit the job 
-        job_submit(jsdata,job_directory)
+        job_submit(jsdata,job_directory,real_submit)
      else:
         loopon=jsdata['JobParameters']['LoopOn'][level]
         for d in loopon['values']:
             jsdata[loopon['what']][loopon['subwhat']]=d
-            jobLoop(jsdata,level-1,job_directory)
+            jobLoop(jsdata,level-1,job_directory,real_submit)
         
 if __name__ == '__main__':
     random.seed()
     job_directory="{0}/slurm_jobs".format(os.getcwd())
     CS.mkdir_p(job_directory)
     jsonFile="json/SinglePartSim.json"
-    if len(sys.argv)==2:
+    if len(sys.argv)>=2:
         jsonFile=sys.argv[1]
+    real_submit=True
+    if len(sys.argv)==3:
+        real_submit=False
     fp=open(jsonFile)
     js=json.load(fp)
-    CS.mkdir_p(js['JobParameters']['output_dir'])
-    jobLoop(js,len(js['JobParameters']['LoopOn'])-1,job_directory)
+    CS.mkdir_p(wbash.get_output_dir(js))
+    jobLoop(js,len(js['JobParameters']['LoopOn'])-1,job_directory,real_submit)
 
