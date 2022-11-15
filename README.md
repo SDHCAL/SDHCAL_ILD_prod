@@ -19,6 +19,7 @@ The slurm batch system uses a mail to communicate with you. Before running the s
 ## running the scripts
 To run the script, you should be located in the directory where this README file is located and enter : `python DiracScripts/<script>.py` where script should be replaced by the name of the python script.
 For all scripts, you can change the json file used for launching the jobs by adding its name on the command line : `python DiracScripts/<script>.py <jsonFile>` 
+For slurm scripts, if you add a second argument whatever it is, (e.g `python DiracScripts/<script>.py <jsonFile> anything`), then the bash script are writen without being submitted to slurm 
 
 # Single particle simulation 
 The scripts to produce single particle ILD simulation are 
