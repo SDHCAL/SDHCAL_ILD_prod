@@ -21,11 +21,10 @@ def write_slurm_bash_script_header(fich,jobname):
 def write_bash_script_ilcsoft_init(fich,jsdata):
     fich.write("source {1}/{0}/init_ilcsoft.sh\n".format(jsdata['SoftwareVersions']['slurm_ilcsoftVersion'],jsdata['SoftwareVersions'].get('ilcsoftBaseDir','/cvmfs/ilc.desy.de/sw')))
 
-def get_and_create_output_dir(jsdata):
+def get_output_dir(jsdata):
     output_dir=jsdata['JobParameters']['output_dir']
     if output_dir[0] != '/':
         output_dir=os.path.join(os.getcwd(),output_dir)
-    CS.mkdir_p(output_dir)
     return output_dir
 
 def create_ddsim_bash_script(jsdata,job_directory,job_number,with_slurm_header):
@@ -46,7 +45,7 @@ def create_ddsim_bash_script(jsdata,job_directory,job_number,with_slurm_header):
        write_slurm_bash_script_header(fich,"ddsim")
     write_bash_script_ilcsoft_init(fich,jsdata)
     lcgeo_detector=jsdata['Detector']['DetectorName']
-    output_dir=get_and_create_output_dir(jsdata)
+    output_dir=get_output_dir(jsdata)
     outputFile=os.path.join(output_dir,"{0}.slcio".format(fileBase))
     fich.write("rm {0}\n".format(outputFile))
     command="ddsim --compactFile $lcgeo_DIR/ILD/compact/{0}/{0}.xml ".format(lcgeo_detector)
@@ -74,7 +73,7 @@ def create_marlin_bash_script(jsdata,job_directory,inputFiles,Nevent,skipEvent,w
     fich.write("cp -R {1}/ILDConfig/{0}/StandardConfig/production/ .\n".format(jsdata['SoftwareVersions']['ILDConfigVersion'],jsdata['SoftwareVersions'].get('ilcsoftBaseDir','/cvmfs/ilc.desy.de/sw')))
     fich.write("cd production\n")
     fich.write("cp {0}/steeringFiles/MarlinStdRecoSDHCALExtendedDST.xml .\n".format(os.getcwd()))
-    output_dir=get_and_create_output_dir(jsdata)
+    output_dir=get_output_dir(jsdata)
     output_base=os.path.join(output_dir,base_output_name)
     fich.write("rm {0}_REC.slcio\n".format(output_base))
     fich.write("rm {0}_DST.slcio\n".format(output_base))
