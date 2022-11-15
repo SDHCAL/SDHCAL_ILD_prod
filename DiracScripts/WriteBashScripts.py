@@ -101,5 +101,5 @@ def create_marlin_bash_script(jsdata,job_directory,inputFiles,Nevent,skipEvent,w
     command_two+=" --constant.OutputBaseName={0}".format(output_base)
     command_two+=" --global.LCIOInputFiles={0}_REC.slcio".format(output_base)
     fich.write("{0}\n\n".format(command_two))
-
+    return job_file
 
