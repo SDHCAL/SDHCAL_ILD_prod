@@ -20,6 +20,7 @@
 	"InputFilesToJobsRatio": "1-to-1",
 	"output_dir": "test",
 	"output_base_name_remove": { "split_character": "_", "split_number": 1},
+        "RecoMCTruthLinker_CrashFix": true,
 	"InputFiles": [
 	    "/ilc/user/g/ggrenier/test/sim_LargeVideau_single_kaon0L_25_GeV_10_0.slcio",
 	    "/ilc/user/g/ggrenier/test/sim_LargeVideau_single_kaon0L_25_GeV_10_1.slcio",

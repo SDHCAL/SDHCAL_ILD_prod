@@ -93,6 +93,7 @@ The parameters in the json file are the following :
   * output\_base\_name\_remove : the name of the first input file without its extension is used as the basename for the output files. We can remove some portion of the end of the file basename. The parameters describe how the removal is done :
     * split\_character : the character used to separate fields in the file basename
     * split\_number : the number of fields to remove at the end of the file basename
+  * RecoMCTruthLinker_CrashFix : optional parameter to activate a workaround to a crash in RecoMCTruthLinker with single neutral particle simulation. Set this parameter to true to activate.
   * InputFiles : The list of inputfiles files with absolute name (name starting by `/`). For ILCDirac, the files are in the Dirac File catalog. For slurm, the files are in a local directory.
  
 # issues and to do list

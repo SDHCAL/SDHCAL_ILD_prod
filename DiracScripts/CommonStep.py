@@ -68,4 +68,8 @@ def extraCLIargMarlinSDHCALRecoBase(jsdata):
     extraCLIarg+=' --constant.PandoraSettingsFile=PandoraSettings/PandoraSettingsPerfectPFA.xml'
     #turn on calibration details in PfoAnalysis (requires full SimCalorimeterHitInfo)
     extraCLIarg+=' --MyPfoAnalysis.CollectCalibrationDetails=1'
+    #work around crash in Marlin with Standard reco on single klong
+    hackFix=jsdata['JobParameters'].get('RecoMCTruthLinker_CrashFix',False)
+    if hackFix:
+        extraCLIarg+=' --MyRecoMCTruthLinker.TrackCollection=VOID'
     return extraCLIarg
