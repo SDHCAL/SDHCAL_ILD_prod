@@ -60,16 +60,18 @@ def myRecoJob(jsdata,dirac):
     ma.setDetectorModel(jsdata['Detector']['DetectorName'])
     extraCLIarg=CS.extraCLIargMarlinSDHCALRecoBase(jsdata)
     extraCLIarg+=" --constant.OutputBaseName={0}".format(base_output_name)
-    ma.setExtraCLIArguments( extraCLIarg )
+    #ma.setExtraCLIArguments( extraCLIarg )
 
     #CMSEnergy hould correspond to the existence of Config/Parameters${CMSEnergy}GeV.xml in ILDConfig
     ma.setEnergy(jsdata['Detector']['CMSEnergy'])
     outputRECfile="{0}_REC.slcio".format(base_output_name)
     outputDSTfile="{0}_DST.slcio".format(base_output_name)
     PFOoutputFile="{0}_PfoAnalysis.root".format(base_output_name)
-    ma.setOutputRecFile(outputRECfile)
-    ma.setOutputDstFile(outputDSTfile)
+    #ma.setOutputRecFile(outputRECfile)
+    #ma.setOutputDstFile(outputDSTfile)
     ma.setOutputFile(outputRECfile)
+    extraCLIarg+=" --DSTOutput.LCIOOutputFile={0}".format(outputDSTfile)
+    ma.setExtraCLIArguments( extraCLIarg ) 
     #append marlin to the job
     res = job.append(ma)
     if not res['OK']:
