@@ -21,7 +21,7 @@ def constructInputFilesList(param):
                     filename=line[:-1]
                     if len(filename):
                         param['InputFiles'].append(filename)
-    print param['InputFiles']
+    #print param['InputFiles']
         
 def decodeInputFileParameters(jsdata):
     param=jsdata['JobParameters']
