@@ -10,8 +10,22 @@ def raiseDecodeError(badkey):
     message='["JobParameters"]["InputFilesToJobsRatio"] is {0}. Authorized values are 1-to-n and n-to-1 with n an integer.'.format(badkey)
     raise KeyError(message)
 
+def constructInputFilesList(param):
+    if 'FilesListingInputFiles' in param:
+        FilesContainingListOfInputFiles=param['FilesListingInputFiles']
+        if 'InputFiles' not in param:
+            param['InputFiles']=[]
+        for files in param['FilesListingInputFiles']:
+            with open(files) as f:
+                for line in f:
+                    filename=line[:-1]
+                    if len(filename):
+                        param['InputFiles'].append(filename)
+    print param['InputFiles']
+        
 def decodeInputFileParameters(jsdata):
     param=jsdata['JobParameters']
+    constructInputFilesList(param)
     NumberOfInputFiles=len(param['InputFiles'])
     NumberOfEventsPerFile=param['NumberOfEventsPerFile']
     InputfilesToJobs=param['InputFilesToJobsRatio']

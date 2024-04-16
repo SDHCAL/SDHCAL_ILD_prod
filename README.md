@@ -95,6 +95,7 @@ The parameters in the json file are the following :
     * split\_number : the number of fields to remove at the end of the file basename
   * RecoMCTruthLinker_CrashFix : optional parameter to activate a workaround to a crash in RecoMCTruthLinker with single neutral particle simulation. Set this parameter to true to activate.
   * InputFiles : The list of inputfiles files with absolute name (name starting by `/`). For ILCDirac, the files are in the Dirac File catalog. For slurm, the files are in a local directory.
+  * FilesListingInputFiles : A list of files containing list of inputfiles filename with absolute name (name starting by `/`), one file name per line.
  
 # issues and to do list
 * Standard reconstruction doesn't work on single particle simulation due to Marlin crashing.
